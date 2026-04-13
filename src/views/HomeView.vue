@@ -4,28 +4,32 @@ import ThemeToggle from '../components/ThemeToggle.vue'
 
 interface Link {
   id: number
+  emoji: string
   title: string
   url: string
 }
 
 const links = ref<Link[]>([
-  { id: 1, title: 'What Is Agentic AI?', url: 'https://www.nvidia.com/en-us/glossary/agentic-ai/' },
-  { id: 2, title: 'The State of AI in 2025', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai' },
-  { id: 3, title: 'Prompt Engineering Guide', url: 'https://www.promptingguide.ai/' },
-  { id: 4, title: 'AI and the Future of Work', url: 'https://www.brookings.edu/articles/how-artificial-intelligence-is-transforming-the-world/' },
-  { id: 5, title: 'Building LLM-Powered Applications', url: 'https://docs.llamaindex.ai/en/stable/' },
+  { id: 1, emoji: '🤖', title: 'What Is Agentic AI?', url: 'https://www.nvidia.com/en-us/glossary/agentic-ai/' },
+  { id: 2, emoji: '📊', title: 'The State of AI in 2025', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai' },
+  { id: 3, emoji: '💡', title: 'Prompt Engineering Guide', url: 'https://www.promptingguide.ai/' },
+  { id: 4, emoji: '🔮', title: 'AI and the Future of Work', url: 'https://www.brookings.edu/articles/how-artificial-intelligence-is-transforming-the-world/' },
+  { id: 5, emoji: '🛠️', title: 'Building LLM-Powered Applications', url: 'https://docs.llamaindex.ai/en/stable/' },
 ])
 
+const newEmoji = ref('')
 const newTitle = ref('')
 const newUrl = ref('')
 
 let nextId = 6
 
 function addLink() {
+  const emoji = newEmoji.value.trim()
   const title = newTitle.value.trim()
   const url = newUrl.value.trim()
   if (!title || !url) return
-  links.value.push({ id: nextId++, title, url })
+  links.value.push({ id: nextId++, emoji: emoji || '🔗', title, url })
+  newEmoji.value = ''
   newTitle.value = ''
   newUrl.value = ''
 }
@@ -47,11 +51,13 @@ function addLink() {
         rel="noopener noreferrer"
         class="link-btn"
       >
-        {{ link.title }}
+        <span class="link-emoji">{{ link.emoji }}</span>
+        <span class="link-title">{{ link.title }}</span>
       </a>
     </div>
 
     <form class="add-form" @submit.prevent="addLink">
+      <input v-model="newEmoji" type="text" placeholder="🔗 Emoji" class="input emoji-input" />
       <input v-model="newTitle" type="text" placeholder="Article title" class="input" />
       <input v-model="newUrl" type="url" placeholder="https://..." class="input" />
       <button type="submit" class="submit-btn">Add Link</button>
@@ -103,18 +109,30 @@ function addLink() {
 }
 
 .link-btn {
-  display: block;
+  display: flex;
+  align-items: center;
   width: 100%;
   padding: 0.875rem 1.25rem;
+  padding-left: 5px;
   background: var(--btn-bg);
   border: 1px solid var(--border);
   border-radius: 12px;
   color: var(--text);
   text-decoration: none;
-  text-align: center;
+  text-align: left;
   font-size: 0.95rem;
   font-weight: 500;
   transition: background-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+}
+
+.link-emoji {
+  font-size: 1.25rem;
+  margin-right: 0.5rem;
+  flex-shrink: 0;
+}
+
+.link-title {
+  flex: 1;
 }
 
 .link-btn:hover {
@@ -155,6 +173,12 @@ function addLink() {
 
 .input:focus {
   border-color: var(--accent);
+}
+
+.emoji-input {
+  width: 80px;
+  text-align: center;
+  font-size: 1.25rem;
 }
 
 .submit-btn {
