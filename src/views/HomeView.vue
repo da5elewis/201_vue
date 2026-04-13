@@ -20,6 +20,17 @@ const links = ref<Link[]>([
 const newEmoji = ref('')
 const newTitle = ref('')
 const newUrl = ref('')
+const showEmojiPicker = ref(false)
+
+const emojiOptions = [
+  '🤖', '📊', '💡', '🔮', '🛠️', '🔗', '📚', '🧠', '🚀', '⚡',
+  '🎯', '💻', '🌐', '📝', '🔬', '📈', '🎓', '🏗️', '✨', '🔥',
+]
+
+function selectEmoji(emoji: string) {
+  newEmoji.value = emoji
+  showEmojiPicker.value = false
+}
 
 let nextId = 6
 
@@ -57,7 +68,22 @@ function addLink() {
     </div>
 
     <form class="add-form" @submit.prevent="addLink">
-      <input v-model="newEmoji" type="text" placeholder="🔗 Emoji" class="input emoji-input" />
+      <div class="emoji-picker-wrapper">
+        <button type="button" class="emoji-toggle" @click="showEmojiPicker = !showEmojiPicker">
+          {{ newEmoji || '🔗' }}
+        </button>
+        <div v-if="showEmojiPicker" class="emoji-picker">
+          <button
+            v-for="emoji in emojiOptions"
+            :key="emoji"
+            type="button"
+            class="emoji-option"
+            @click="selectEmoji(emoji)"
+          >
+            {{ emoji }}
+          </button>
+        </div>
+      </div>
       <input v-model="newTitle" type="text" placeholder="Article title" class="input" />
       <input v-model="newUrl" type="url" placeholder="https://..." class="input" />
       <button type="submit" class="submit-btn">Add Link</button>
@@ -179,6 +205,61 @@ function addLink() {
   width: 80px;
   text-align: center;
   font-size: 1.25rem;
+}
+
+.emoji-picker-wrapper {
+  position: relative;
+}
+
+.emoji-toggle {
+  width: 48px;
+  height: 48px;
+  font-size: 1.5rem;
+  background: var(--btn-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s ease;
+}
+
+.emoji-toggle:hover {
+  border-color: var(--accent);
+}
+
+.emoji-picker {
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  left: 0;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+  padding: 0.5rem;
+  background: var(--btn-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.emoji-option {
+  width: 40px;
+  height: 40px;
+  font-size: 1.25rem;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease;
+}
+
+.emoji-option:hover {
+  background: var(--btn-hover);
 }
 
 .submit-btn {
