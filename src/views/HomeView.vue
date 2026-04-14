@@ -2,21 +2,9 @@
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import ThemeToggle from '../components/ThemeToggle.vue'
+import { useFeaturedLinks } from '../composables/useFeaturedLinks'
 
-interface Link {
-  id: number
-  emoji: string
-  title: string
-  url: string
-}
-
-const links = ref<Link[]>([
-  { id: 1, emoji: '🤖', title: 'What Is Agentic AI?', url: 'https://www.nvidia.com/en-us/glossary/agentic-ai/' },
-  { id: 2, emoji: '📊', title: 'The State of AI in 2025', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai' },
-  { id: 3, emoji: '💡', title: 'Prompt Engineering Guide', url: 'https://www.promptingguide.ai/' },
-  { id: 4, emoji: '🔮', title: 'AI and the Future of Work', url: 'https://www.brookings.edu/articles/how-artificial-intelligence-is-transforming-the-world/' },
-  { id: 5, emoji: '🛠️', title: 'Building LLM-Powered Applications', url: 'https://docs.llamaindex.ai/en/stable/' },
-])
+const { links, addLink, removeLink } = useFeaturedLinks()
 
 const newEmoji = ref('')
 const newTitle = ref('')
@@ -33,13 +21,11 @@ function selectEmoji(emoji: string) {
   showEmojiPicker.value = false
 }
 
-let nextId = 6
-
-function addLink() {
+function handleAddLink() {
   const title = newTitle.value.trim()
   const url = newUrl.value.trim()
   if (!title || !url) return
-  links.value.push({ id: nextId++, emoji: newEmoji.value || '🔗', title, url })
+  addLink(newEmoji.value || '🔗', title, url)
   newEmoji.value = ''
   newTitle.value = ''
   newUrl.value = ''
@@ -60,20 +46,23 @@ function addLink() {
     <h2 class="section-title">Featured Articles</h2>
 
     <div class="links">
-      <a
-        v-for="link in links"
-        :key="link.id"
-        :href="link.url"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="link-btn"
-      >
-        <span class="link-emoji">{{ link.emoji }}</span>
-        <span class="link-title">{{ link.title }}</span>
-      </a>
+      <div v-for="link in links" :key="link.id" class="link-row">
+        <a
+          :href="link.url"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="link-btn"
+        >
+          <span class="link-emoji">{{ link.emoji }}</span>
+          <span class="link-title">{{ link.title }}</span>
+        </a>
+        <button class="delete-btn" @click="removeLink(link.id)" aria-label="Delete link">
+          🗑️
+        </button>
+      </div>
     </div>
 
-    <form class="add-form" @submit.prevent="addLink">
+    <form class="add-form" @submit.prevent="handleAddLink">
       <div class="emoji-picker-wrapper">
         <button type="button" class="emoji-toggle" @click="showEmojiPicker = !showEmojiPicker">
           {{ newEmoji || '🔗' }}
@@ -160,10 +149,16 @@ function addLink() {
   margin-bottom: 2rem;
 }
 
+.link-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .link-btn {
   display: flex;
   align-items: center;
-  width: 100%;
+  flex: 1;
   padding: 0.875rem 1.25rem;
   padding-left: 8px;
   background: var(--btn-bg);
@@ -247,6 +242,24 @@ function addLink() {
 
 .submit-btn:active {
   transform: translateY(0);
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+
+.delete-btn:hover {
+  background: var(--btn-hover);
+  opacity: 1;
+  transform: scale(1.15);
 }
 
 .emoji-picker-wrapper {

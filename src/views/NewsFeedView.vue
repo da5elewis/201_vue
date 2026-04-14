@@ -2,71 +2,101 @@
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import ThemeToggle from '../components/ThemeToggle.vue'
+import { useFeaturedLinks } from '../composables/useFeaturedLinks'
+
+const { addLink, hasLink } = useFeaturedLinks()
 
 interface Article {
   id: number
+  emoji: string
   title: string
   summary: string
   source: string
   date: string
+  url: string
+  added: boolean
 }
 
 const articles = ref<Article[]>([
   {
     id: 1,
-    title: 'How AI Is Reshaping the Customer Experience Landscape',
-    summary: 'Artificial intelligence is transforming how businesses interact with customers, from personalized recommendations to predictive support that anticipates needs before they arise.',
-    source: 'Harvard Business Review',
-    date: '2026-04-10',
+    emoji: '🌐',
+    title: 'The Next Frontier of Customer Engagement: AI-Enabled Customer Service',
+    summary: 'AI-enabled customer service is now the quickest and most effective route for institutions to deliver personalized, proactive experiences that drive customer engagement.',
+    source: 'McKinsey',
+    date: '2023-03-27',
+    url: 'https://www.mckinsey.com/capabilities/operations/our-insights/the-next-frontier-of-customer-engagement-ai-enabled-customer-service',
+    added: false,
   },
   {
     id: 2,
-    title: 'Agentic AI: The Next Frontier in Customer Service',
-    summary: 'Autonomous AI agents are beginning to handle complex customer inquiries end-to-end, reducing wait times and improving satisfaction scores across industries.',
-    source: 'McKinsey Digital',
-    date: '2026-04-08',
+    emoji: '🤖',
+    title: '3 Bold and Actionable Predictions for the Future of GenAI',
+    summary: 'By 2028, 33% of enterprise software applications will incorporate agentic AI capabilities, and agentic AI will make at least 15% of day-to-day work decisions autonomously.',
+    source: 'Gartner',
+    date: '2025-12-05',
+    url: 'https://www.gartner.com/en/articles/3-bold-and-actionable-predictions-for-the-future-of-genai',
+    added: false,
   },
   {
     id: 3,
-    title: 'Personalization at Scale: AI-Driven CX Strategies',
-    summary: 'Companies leveraging AI for hyper-personalization are seeing 40% higher engagement rates, with machine learning models adapting in real time to customer behavior.',
-    source: 'Forrester Research',
-    date: '2026-04-05',
+    emoji: '🎯',
+    title: 'The State of AI: How Organizations Are Rewiring to Capture Value',
+    summary: 'Organizations seeing the highest AI impact are embedding it across business functions, investing in talent, and fundamentally rewiring how they operate.',
+    source: 'McKinsey',
+    date: '2025-03-25',
+    url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai',
+    added: false,
   },
   {
     id: 4,
-    title: 'The Rise of Conversational AI in Retail',
-    summary: 'Natural language processing advances are enabling retailers to deploy virtual assistants that understand context, emotion, and intent with near-human accuracy.',
-    source: 'MIT Technology Review',
-    date: '2026-04-02',
+    emoji: '💬',
+    title: 'What Is Agentic AI?',
+    summary: 'Agentic AI systems can independently make decisions, plan actions, and learn from outcomes, operating with minimal human oversight to complete complex multi-step tasks.',
+    source: 'NVIDIA',
+    date: '2025-01-15',
+    url: 'https://www.nvidia.com/en-us/glossary/agentic-ai/',
+    added: false,
   },
   {
     id: 5,
-    title: 'AI-Powered Sentiment Analysis Is Changing Feedback Loops',
-    summary: 'Real-time sentiment analysis tools are helping brands detect customer frustration early, enabling proactive interventions that reduce churn by up to 25%.',
-    source: 'Gartner',
-    date: '2026-03-28',
+    emoji: '📊',
+    title: 'How Artificial Intelligence Is Transforming the World',
+    summary: 'AI is changing every walk of life from healthcare to transportation, impacting how customers interact with brands through personalization, chatbots, and predictive analytics.',
+    source: 'Brookings Institution',
+    date: '2024-04-24',
+    url: 'https://www.brookings.edu/articles/how-artificial-intelligence-is-transforming-the-world/',
+    added: false,
   },
   {
     id: 6,
-    title: 'Building Trust in AI-Driven Customer Experiences',
-    summary: 'As AI becomes more embedded in customer journeys, transparency and explainability are emerging as critical factors for maintaining consumer trust and loyalty.',
-    source: 'Deloitte Insights',
-    date: '2026-03-25',
+    emoji: '🤝',
+    title: 'Customer Experience in the Age of AI',
+    summary: 'Companies that deliver personalized AI-driven experiences are seeing revenue gains of 10-15%, with customer satisfaction scores rising substantially across channels.',
+    source: 'Harvard Business Review',
+    date: '2024-03-07',
+    url: 'https://hbr.org/2022/03/customer-experience-in-the-age-of-ai',
+    added: false,
   },
   {
     id: 7,
-    title: 'Predictive Analytics and the Future of Customer Retention',
-    summary: 'Machine learning models that predict customer behavior are enabling proactive retention strategies, with early adopters reporting 30% improvements in lifetime value.',
-    source: 'Bain & Company',
-    date: '2026-03-20',
+    emoji: '📈',
+    title: 'The Economic Potential of Generative AI',
+    summary: 'Generative AI could add up to $4.4 trillion annually to the global economy, with customer operations being one of the highest-impact areas for productivity gains.',
+    source: 'McKinsey',
+    date: '2023-06-14',
+    url: 'https://www.mckinsey.com/capabilities/mckinsey-digital/our-insights/the-economic-potential-of-generative-ai-the-next-productivity-frontier',
+    added: false,
   },
   {
     id: 8,
-    title: 'Voice AI Is Redefining Contact Center Operations',
-    summary: 'Advanced voice recognition and synthesis technologies are automating routine calls while routing complex issues to human agents, creating a seamless hybrid experience.',
-    source: 'Accenture',
-    date: '2026-03-15',
+    emoji: '🎙️',
+    title: 'Prompt Engineering Guide',
+    summary: 'A comprehensive resource covering prompt engineering techniques, from zero-shot and few-shot prompting to chain-of-thought reasoning for building better AI-powered applications.',
+    source: 'DAIR.AI',
+    date: '2024-02-20',
+    url: 'https://www.promptingguide.ai/',
+    added: false,
   },
 ])
 
@@ -76,6 +106,17 @@ function formatDate(dateStr: string): string {
     month: 'short',
     day: 'numeric',
   })
+}
+
+function addToFeatured(article: Article) {
+  if (article.added || hasLink(article.title)) return
+  addLink(article.emoji, article.title, article.url)
+  article.added = true
+}
+
+function deleteArticle(id: number) {
+  const idx = articles.value.findIndex((a) => a.id === id)
+  if (idx !== -1) articles.value.splice(idx, 1)
 }
 </script>
 
@@ -89,11 +130,27 @@ function formatDate(dateStr: string): string {
 
     <div class="articles">
       <article v-for="article in articles" :key="article.id" class="article-card">
-        <h2 class="article-title">{{ article.title }}</h2>
+        <div class="article-header">
+          <h2 class="article-title"><span class="article-emoji">{{ article.emoji }}</span> {{ article.title }}</h2>
+          <button class="delete-btn" @click="deleteArticle(article.id)" aria-label="Delete article">
+            🗑️
+          </button>
+        </div>
         <p class="article-summary">{{ article.summary }}</p>
+        <a :href="article.url" target="_blank" rel="noopener noreferrer" class="article-link">Read article &rarr;</a>
         <div class="article-meta">
           <span class="article-source">{{ article.source }}</span>
           <span class="article-date">{{ formatDate(article.date) }}</span>
+        </div>
+        <div class="article-actions">
+          <button
+            v-if="!article.added"
+            class="add-featured-btn"
+            @click="addToFeatured(article)"
+          >
+            + Add to Featured
+          </button>
+          <span v-else class="added-label">✓ Added to Featured Articles</span>
         </div>
       </article>
     </div>
@@ -145,18 +202,57 @@ function formatDate(dateStr: string): string {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
+.article-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
 .article-title {
   font-size: 1rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
   line-height: 1.4;
+  flex: 1;
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 8px;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+
+.delete-btn:hover {
+  background: var(--btn-hover);
+  opacity: 1;
+  transform: scale(1.15);
 }
 
 .article-summary {
   color: var(--text-muted);
   font-size: 0.85rem;
   line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+
+.article-link {
+  display: inline-block;
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-decoration: none;
   margin-bottom: 0.75rem;
+  transition: color 0.2s ease;
+}
+
+.article-link:hover {
+  color: var(--accent-hover);
 }
 
 .article-meta {
@@ -164,6 +260,11 @@ function formatDate(dateStr: string): string {
   justify-content: space-between;
   align-items: center;
   font-size: 0.8rem;
+  margin-bottom: 0.75rem;
+}
+
+.article-emoji {
+  font-size: 1.1rem;
 }
 
 .article-source {
@@ -173,6 +274,39 @@ function formatDate(dateStr: string): string {
 
 .article-date {
   color: var(--text-muted);
+}
+
+.article-actions {
+  margin-top: 0.5rem;
+}
+
+.add-featured-btn {
+  width: 100%;
+  padding: 0.5rem;
+  background: transparent;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  color: var(--accent);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.25s ease, color 0.25s ease, transform 0.2s ease;
+}
+
+.add-featured-btn:hover {
+  background: var(--accent);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.added-label {
+  display: block;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  padding: 0.5rem;
 }
 
 .nav-link {

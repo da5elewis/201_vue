@@ -1,0 +1,41 @@
+import { reactive, toRefs } from 'vue'
+
+export interface FeaturedLink {
+  id: number
+  emoji: string
+  title: string
+  url: string
+}
+
+const state = reactive({
+  links: [
+    { id: 1, emoji: '🤖', title: 'What Is Agentic AI?', url: 'https://www.nvidia.com/en-us/glossary/agentic-ai/' },
+    { id: 2, emoji: '📊', title: 'The State of AI in 2025', url: 'https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai' },
+    { id: 3, emoji: '💡', title: 'Prompt Engineering Guide', url: 'https://www.promptingguide.ai/' },
+    { id: 4, emoji: '🔮', title: 'AI and the Future of Work', url: 'https://www.brookings.edu/articles/how-artificial-intelligence-is-transforming-the-world/' },
+    { id: 5, emoji: '🛠️', title: 'Building LLM-Powered Applications', url: 'https://docs.llamaindex.ai/en/stable/' },
+  ] as FeaturedLink[],
+  nextId: 6,
+})
+
+export function useFeaturedLinks() {
+  function addLink(emoji: string, title: string, url: string) {
+    state.links.push({ id: state.nextId++, emoji, title, url })
+  }
+
+  function removeLink(id: number) {
+    const idx = state.links.findIndex((l) => l.id === id)
+    if (idx !== -1) state.links.splice(idx, 1)
+  }
+
+  function hasLink(title: string): boolean {
+    return state.links.some((l) => l.title === title)
+  }
+
+  return {
+    ...toRefs(state),
+    addLink,
+    removeLink,
+    hasLink,
+  }
+}
