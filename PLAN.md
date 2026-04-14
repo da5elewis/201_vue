@@ -1,10 +1,15 @@
-Replace the starter content in this Vue project with a link showcase page.  Here's what I want:
+Edit this Vue project with a link showcase page.  Here's what I want:
 - Make the links page the home route
 - Centered card layout, max-width 480px, mobile first
-- The page purpose (AI Resources) as a heading, a short tagline underneath "Curated articles and insights on artificial intelligence, agentic systems, and the future of work."
-- A circular photo placeholder
+- The page purpose (AI Insights) as a heading, a short tagline underneath "Curated articles and insights on artificial intelligence, agentic systems, and the future of work."
+- A square photo that communicates AI insights to the left of the heading
 - Stacked link buttons where the user can enter an article title and an article link
+- A heading over the stacked link buttons "Featured Articles"
 - Dark mode by default with a light/dark toggle button
 - Smooth hover animactions on the buttons
 - Use google Font: Inter
-- Clean up any starter files or components I don't need
+- Clean up any files or components I don't need
+- Create a route for a News Feed page labeled "News Feed"
+- Create a dynamically updated list of articles related to the AI impact on customer experience
+- Each News Feed article has a title, short summary, source, and publication date
+- On the News Feed page include a link back Home route
