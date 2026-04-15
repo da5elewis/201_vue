@@ -118,6 +118,24 @@ function deleteArticle(id: number) {
   const idx = articles.value.findIndex((a) => a.id === id)
   if (idx !== -1) articles.value.splice(idx, 1)
 }
+
+const lastFetched = ref(new Date())
+
+function formatTimestamp(date: Date): string {
+  return date.toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  })
+}
+
+function refreshArticles() {
+  articles.value.forEach((a) => (a.added = false))
+  lastFetched.value = new Date()
+}
 </script>
 
 <template>
@@ -126,6 +144,10 @@ function deleteArticle(id: number) {
     <div class="feed-header">
       <h1 class="feed-title">News Feed</h1>
       <p class="feed-subtitle">AI &amp; Customer Experience</p>
+      <div class="feed-toolbar">
+        <span class="last-fetched">Updated {{ formatTimestamp(lastFetched) }}</span>
+        <button class="refresh-btn" @click="refreshArticles">Refresh articles</button>
+      </div>
     </div>
 
     <div class="articles">
@@ -170,6 +192,40 @@ function deleteArticle(id: number) {
 
 .feed-header {
   margin-bottom: 2rem;
+}
+
+.feed-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.75rem;
+}
+
+.last-fetched {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.refresh-btn {
+  padding: 0.4rem 0.75rem;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.25s ease, transform 0.2s ease;
+}
+
+.refresh-btn:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+.refresh-btn:active {
+  transform: translateY(0);
 }
 
 .feed-title {
