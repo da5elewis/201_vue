@@ -1,8 +1,1 @@
 @import './base.css';
-
-#app {
-  display: flex;
-  justify-content: center;
-  padding: 2rem 1rem;
-  min-height: 100vh;
-}

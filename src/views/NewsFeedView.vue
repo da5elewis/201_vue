@@ -2,13 +2,14 @@
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import ThemeToggle from '../components/ThemeToggle.vue'
+import NewsCard from '../components/NewsCard.vue'
 import { useFeaturedLinks } from '../composables/useFeaturedLinks'
 
 const { addLink, hasLink } = useFeaturedLinks()
 
 interface Article {
   id: number
-  emoji: string
+  icon: string
   title: string
   summary: string
   source: string
@@ -20,7 +21,7 @@ interface Article {
 const articles = ref<Article[]>([
   {
     id: 1,
-    emoji: '🌐',
+    icon: 'mdi-web',
     title: 'The Next Frontier of Customer Engagement: AI-Enabled Customer Service',
     summary: 'AI-enabled customer service is now the quickest and most effective route for institutions to deliver personalized, proactive experiences that drive customer engagement.',
     source: 'McKinsey',
@@ -30,7 +31,7 @@ const articles = ref<Article[]>([
   },
   {
     id: 2,
-    emoji: '🤖',
+    icon: 'mdi-robot',
     title: '3 Bold and Actionable Predictions for the Future of GenAI',
     summary: 'By 2028, 33% of enterprise software applications will incorporate agentic AI capabilities, and agentic AI will make at least 15% of day-to-day work decisions autonomously.',
     source: 'Gartner',
@@ -40,7 +41,7 @@ const articles = ref<Article[]>([
   },
   {
     id: 3,
-    emoji: '🎯',
+    icon: 'mdi-target',
     title: 'The State of AI: How Organizations Are Rewiring to Capture Value',
     summary: 'Organizations seeing the highest AI impact are embedding it across business functions, investing in talent, and fundamentally rewiring how they operate.',
     source: 'McKinsey',
@@ -50,7 +51,7 @@ const articles = ref<Article[]>([
   },
   {
     id: 4,
-    emoji: '💬',
+    icon: 'mdi-forum',
     title: 'What Is Agentic AI?',
     summary: 'Agentic AI systems can independently make decisions, plan actions, and learn from outcomes, operating with minimal human oversight to complete complex multi-step tasks.',
     source: 'NVIDIA',
@@ -60,7 +61,7 @@ const articles = ref<Article[]>([
   },
   {
     id: 5,
-    emoji: '📊',
+    icon: 'mdi-chart-box',
     title: 'How Artificial Intelligence Is Transforming the World',
     summary: 'AI is changing every walk of life from healthcare to transportation, impacting how customers interact with brands through personalization, chatbots, and predictive analytics.',
     source: 'Brookings Institution',
@@ -70,7 +71,7 @@ const articles = ref<Article[]>([
   },
   {
     id: 6,
-    emoji: '🤝',
+    icon: 'mdi-handshake',
     title: 'Customer Experience in the Age of AI',
     summary: 'Companies that deliver personalized AI-driven experiences are seeing revenue gains of 10-15%, with customer satisfaction scores rising substantially across channels.',
     source: 'Harvard Business Review',
@@ -80,7 +81,7 @@ const articles = ref<Article[]>([
   },
   {
     id: 7,
-    emoji: '📈',
+    icon: 'mdi-trending-up',
     title: 'The Economic Potential of Generative AI',
     summary: 'Generative AI could add up to $4.4 trillion annually to the global economy, with customer operations being one of the highest-impact areas for productivity gains.',
     source: 'McKinsey',
@@ -90,7 +91,7 @@ const articles = ref<Article[]>([
   },
   {
     id: 8,
-    emoji: '🎙️',
+    icon: 'mdi-book-open-variant',
     title: 'Prompt Engineering Guide',
     summary: 'A comprehensive resource covering prompt engineering techniques, from zero-shot and few-shot prompting to chain-of-thought reasoning for building better AI-powered applications.',
     source: 'DAIR.AI',
@@ -100,17 +101,9 @@ const articles = ref<Article[]>([
   },
 ])
 
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  })
-}
-
 function addToFeatured(article: Article) {
   if (article.added || hasLink(article.title)) return
-  addLink(article.emoji, article.title, article.url)
+  addLink(article.icon, article.title, article.url)
   article.added = true
 }
 
@@ -140,242 +133,60 @@ function refreshArticles() {
 
 <template>
   <ThemeToggle />
-  <div class="feed">
-    <div class="feed-header">
-      <h1 class="feed-title">News Feed</h1>
-      <p class="feed-subtitle">AI &amp; Customer Experience</p>
-      <div class="feed-toolbar">
-        <span class="last-fetched">Updated {{ formatTimestamp(lastFetched) }}</span>
-        <button class="refresh-btn" @click="refreshArticles">Refresh articles</button>
+  <v-container class="d-flex justify-center pa-4">
+    <div style="width: 100%; max-width: 480px;">
+
+      <!-- Header -->
+      <div class="mb-10">
+        <h1 class="text-h5 font-weight-bold">News Feed</h1>
+        <p class="text-body-2 text-medium-emphasis">AI &amp; Customer Experience</p>
+        <div class="d-flex align-center justify-space-between mt-3">
+          <span class="text-caption text-medium-emphasis">Updated {{ formatTimestamp(lastFetched) }}</span>
+          <v-btn
+            size="small"
+            color="primary"
+            variant="flat"
+            class="text-none font-weight-bold"
+            style="padding-left: 2px; padding-right: 2px;"
+            @click="refreshArticles"
+          >
+            Refresh articles
+          </v-btn>
+        </div>
+      </div>
+
+      <!-- Articles -->
+      <div class="d-flex flex-column ga-4" style="padding-top: 6px;">
+        <NewsCard
+          v-for="article in articles"
+          :key="article.id"
+          :icon="article.icon"
+          :headline="article.title"
+          :summary="article.summary"
+          :link="article.url"
+          :source="article.source"
+          :date="article.date"
+          :added="article.added"
+          @add="addToFeatured(article)"
+          @delete="deleteArticle(article.id)"
+        />
+      </div>
+
+      <!-- Back Link -->
+      <div class="my-6">
+        <v-btn
+          :to="{ name: 'home' }"
+          variant="text"
+          color="primary"
+          class="text-none font-weight-medium"
+          prepend-icon="mdi-arrow-left"
+        >
+          Back to Home
+        </v-btn>
       </div>
     </div>
-
-    <div class="articles">
-      <article v-for="article in articles" :key="article.id" class="article-card">
-        <div class="article-header">
-          <h2 class="article-title"><span class="article-emoji">{{ article.emoji }}</span> {{ article.title }}</h2>
-          <button class="delete-btn" @click="deleteArticle(article.id)" aria-label="Delete article">
-            🗑️
-          </button>
-        </div>
-        <p class="article-summary">{{ article.summary }}</p>
-        <a :href="article.url" target="_blank" rel="noopener noreferrer" class="article-link">Read article &rarr;</a>
-        <div class="article-meta">
-          <span class="article-source">{{ article.source }}</span>
-          <span class="article-date">{{ formatDate(article.date) }}</span>
-        </div>
-        <div class="article-actions">
-          <button
-            v-if="!article.added"
-            class="add-featured-btn"
-            @click="addToFeatured(article)"
-          >
-            + Add to Featured
-          </button>
-          <span v-else class="added-label">✓ Added to Featured Articles</span>
-        </div>
-      </article>
-    </div>
-
-    <RouterLink to="/" class="nav-link">&larr; Back to Home</RouterLink>
-  </div>
+  </v-container>
 </template>
 
 <style scoped>
-.feed {
-  width: 100%;
-  max-width: 480px;
-  display: flex;
-  flex-direction: column;
-  padding-top: 2rem;
-}
-
-.feed-header {
-  margin-bottom: 2rem;
-}
-
-.feed-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 0.75rem;
-}
-
-.last-fetched {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-}
-
-.refresh-btn {
-  padding: 0.4rem 0.75rem;
-  background: var(--accent);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.25s ease, transform 0.2s ease;
-}
-
-.refresh-btn:hover {
-  background: var(--accent-hover);
-  transform: translateY(-1px);
-}
-
-.refresh-btn:active {
-  transform: translateY(0);
-}
-
-.feed-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 0.25rem;
-}
-
-.feed-subtitle {
-  color: var(--text-muted);
-  font-size: 0.9rem;
-}
-
-.articles {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.article-card {
-  background: var(--btn-bg);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 1.25rem;
-  transition: transform 0.2s ease, box-shadow 0.25s ease;
-}
-
-.article-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.article-header {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.5rem;
-}
-
-.article-title {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  line-height: 1.4;
-  flex: 1;
-}
-
-.delete-btn {
-  background: none;
-  border: none;
-  font-size: 1.1rem;
-  cursor: pointer;
-  padding: 0.25rem;
-  border-radius: 8px;
-  transition: background-color 0.2s ease, transform 0.2s ease;
-  flex-shrink: 0;
-  opacity: 0.5;
-}
-
-.delete-btn:hover {
-  background: var(--btn-hover);
-  opacity: 1;
-  transform: scale(1.15);
-}
-
-.article-summary {
-  color: var(--text-muted);
-  font-size: 0.85rem;
-  line-height: 1.6;
-  margin-bottom: 0.5rem;
-}
-
-.article-link {
-  display: inline-block;
-  color: var(--accent);
-  font-size: 0.8rem;
-  font-weight: 500;
-  text-decoration: none;
-  margin-bottom: 0.75rem;
-  transition: color 0.2s ease;
-}
-
-.article-link:hover {
-  color: var(--accent-hover);
-}
-
-.article-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.8rem;
-  margin-bottom: 0.75rem;
-}
-
-.article-emoji {
-  font-size: 1.1rem;
-}
-
-.article-source {
-  color: var(--accent);
-  font-weight: 500;
-}
-
-.article-date {
-  color: var(--text-muted);
-}
-
-.article-actions {
-  margin-top: 0.5rem;
-}
-
-.add-featured-btn {
-  width: 100%;
-  padding: 0.5rem;
-  background: transparent;
-  border: 1px solid var(--accent);
-  border-radius: 8px;
-  color: var(--accent);
-  font-family: 'Inter', sans-serif;
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.25s ease, color 0.25s ease, transform 0.2s ease;
-}
-
-.add-featured-btn:hover {
-  background: var(--accent);
-  color: #fff;
-  transform: translateY(-1px);
-}
-
-.added-label {
-  display: block;
-  text-align: center;
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: var(--text-muted);
-  padding: 0.5rem;
-}
-
-.nav-link {
-  margin-top: 2rem;
-  margin-bottom: 2rem;
-  color: var(--accent);
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 0.95rem;
-  transition: color 0.2s ease;
-}
-
-.nav-link:hover {
-  color: var(--accent-hover);
-}
 </style>
